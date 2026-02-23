@@ -3,7 +3,6 @@ import {
   Instagram,
   Facebook,
   Phone,
-  Mail,
   MapPin,
   CreditCard,
   Banknote,
@@ -112,35 +111,50 @@ export default function Footer() {
           {/* Column 4: Contact */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Contacto
+              Nuestros Locales
             </h3>
-            <ul className="mt-4 space-y-3">
-              <li className="flex items-start gap-3">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
-                <span className="text-sm text-gray-400">+598 99 123 456</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
-                <a
-                  href="mailto:contacto@bengalamax.uy"
-                  className="text-sm text-gray-400 transition-colors hover:text-white"
-                >
-                  contacto@bengalamax.uy
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
-                <span className="text-sm text-gray-400">
-                  Fray Bentos, Uruguay
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
-                <span className="text-sm text-gray-400">
-                  Mercedes, Uruguay
-                </span>
-              </li>
-            </ul>
+            <div className="mt-4 space-y-4">
+              {/* Fray Bentos */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary/70">
+                  Fray Bentos
+                </p>
+                <ul className="mt-1.5 space-y-1.5">
+                  <li className="flex items-start gap-2">
+                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+                    <span className="text-sm text-gray-400">Rincon 1783</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+                    <a href="tel:+59898161513" className="text-sm text-gray-400 transition-colors hover:text-white">098 161 513</a>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+                    <span className="text-sm text-gray-400">18 de Julio 1174</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+                    <a href="tel:+59891423838" className="text-sm text-gray-400 transition-colors hover:text-white">091 423 838</a>
+                  </li>
+                </ul>
+              </div>
+              {/* Mercedes */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary/70">
+                  Mercedes
+                </p>
+                <ul className="mt-1.5 space-y-1.5">
+                  <li className="flex items-start gap-2">
+                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+                    <span className="text-sm text-gray-400">Colon 442</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+                    <a href="tel:+59891423854" className="text-sm text-gray-400 transition-colors hover:text-white">091 423 854</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
