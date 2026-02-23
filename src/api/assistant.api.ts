@@ -19,6 +19,7 @@ export interface ChatResponse {
   products: ChatProduct[];
   conversationId: string;
   messageId: string;
+  cartUpdated?: boolean;
 }
 
 // ── API ────────────────────────────────────────────────────────

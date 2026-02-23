@@ -5,6 +5,8 @@ import {
   type ChatMessage,
   type ChatProduct,
 } from '@/api/assistant.api';
+import { getCartApi } from '@/api/cart.api';
+import { useCartStore } from '@/stores/cart.store';
 
 export interface AssistantMessage {
   role: 'user' | 'assistant';
@@ -66,6 +68,16 @@ function saveConversationId(id: string | null) {
   } catch {}
 }
 
+/** Refresh the cart store after assistant adds items */
+async function refreshCart() {
+  try {
+    const cart = await getCartApi();
+    useCartStore.getState().setItems(cart.items);
+  } catch {
+    // User may not be logged in client-side; ignore
+  }
+}
+
 export const useChatStore = create<ChatState>()((set, get) => ({
   messages: loadMessages(),
   conversationId: loadConversationId(),
@@ -118,6 +130,11 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       }));
       saveMessages(updated);
       saveConversationId(convId);
+
+      // If the assistant added items to the cart, refresh it
+      if (response.cartUpdated) {
+        refreshCart();
+      }
     } catch (error) {
       const status = (error as any)?.response?.status;
       let content =

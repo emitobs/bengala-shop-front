@@ -58,7 +58,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Desktop: floating panel */}
-          <div className="fixed bottom-24 right-6 z-50 hidden h-[520px] w-[380px] md:block">
+          <div className="fixed bottom-24 right-6 z-50 hidden h-[600px] w-[440px] md:block lg:h-[680px] lg:w-[480px]">
             <ChatPanel />
           </div>
         </>
