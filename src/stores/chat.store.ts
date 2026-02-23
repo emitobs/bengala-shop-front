@@ -118,12 +118,18 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       }));
       saveMessages(updated);
       saveConversationId(convId);
-    } catch {
-      const errorMsg: AssistantMessage = {
-        role: 'assistant',
-        content:
-          'Lo siento, hubo un error al procesar tu mensaje. Intenta de nuevo.',
-      };
+    } catch (error) {
+      const status = (error as any)?.response?.status;
+      let content =
+        'Lo siento, hubo un error al procesar tu mensaje. Intenta de nuevo.';
+      if (status === 429) {
+        content =
+          'Estas enviando mensajes muy rapido. Espera un momento e intenta de nuevo.';
+      }
+      if (import.meta.env.DEV) {
+        console.error('[Chat] API error:', error);
+      }
+      const errorMsg: AssistantMessage = { role: 'assistant', content };
       const updated = [...currentMessages, errorMsg];
       set({ messages: updated, isLoading: false });
       saveMessages(updated);
