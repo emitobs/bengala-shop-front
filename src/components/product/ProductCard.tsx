@@ -28,7 +28,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const sortedImages = [...product.images].sort(
+  const sortedImages = [...(product.images ?? [])].sort(
     (a, b) => a.sortOrder - b.sortOrder,
   );
   const mainImage = sortedImages.length > 0 ? sortedImages[0] : null;
@@ -44,9 +44,10 @@ export default function ProductCard({ product, className }: ProductCardProps) {
     product.compareAtPrice,
   );
 
+  const variants = product.variants ?? [];
   const isOutOfStock =
-    product.variants.length > 0 &&
-    product.variants.every((v) => v.stock <= 0);
+    variants.length > 0 &&
+    variants.every((v) => v.stock <= 0);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -54,7 +55,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
     setIsFavorite((prev) => !prev);
   };
 
-  const availableVariants = product.variants.filter((v) => v.stock > 0);
+  const availableVariants = variants.filter((v) => v.stock > 0);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

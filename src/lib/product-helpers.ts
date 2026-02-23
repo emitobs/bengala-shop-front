@@ -50,12 +50,12 @@ export function normalizeProduct(product: Product): Product {
     compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
     averageRating: product.averageRating ? Number(product.averageRating) : null,
     reviewCount: Number(product.reviewCount ?? 0),
-    images: product.images.map((img, index) => ({
+    images: (product.images ?? []).map((img, index) => ({
       ...img,
       url: resolveImageUrl(img.url, product.name),
       sortOrder: img.sortOrder ?? index,
     })),
-    variants: product.variants.map((v: any) => ({
+    variants: (product.variants ?? []).map((v: any) => ({
       ...v,
       price: Number(product.basePrice) + Number(v.priceAdjustment ?? v.price ?? 0),
       compareAtPrice: v.compareAtPrice ? Number(v.compareAtPrice) : null,
@@ -113,8 +113,9 @@ export function getDiscountPercentage(
  * Check if a product is out of stock based on totalStock or variants.
  */
 export function isProductOutOfStock(product: Product): boolean {
-  if (product.variants.length > 0) {
-    return product.variants.every((v) => v.stock <= 0);
+  const variants = product.variants ?? [];
+  if (variants.length > 0) {
+    return variants.every((v) => v.stock <= 0);
   }
   return false;
 }
