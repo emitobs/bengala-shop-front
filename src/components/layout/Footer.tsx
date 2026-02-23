@@ -3,6 +3,7 @@ import {
   Instagram,
   Facebook,
   Phone,
+  Mail,
   MapPin,
   CreditCard,
   Banknote,
@@ -45,7 +46,14 @@ export default function Footer() {
             <p className="mt-3 text-sm leading-relaxed text-gray-400">
               Tu bazar online en Uruguay. Encontra los mejores productos con envio a todo el pais.
             </p>
-            <div className="mt-5 flex items-center gap-3">
+            <a
+              href="mailto:contacto@bengalamax.uy"
+              className="mt-3 inline-flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-white"
+            >
+              <Mail className="h-3.5 w-3.5 text-primary/70" />
+              contacto@bengalamax.uy
+            </a>
+            <div className="mt-4 flex items-center gap-3">
               <a
                 href="https://www.instagram.com/bengala_max/"
                 target="_blank"
