@@ -5,8 +5,7 @@ import {
   type ChatMessage,
   type ChatProduct,
 } from '@/api/assistant.api';
-import { getCartApi } from '@/api/cart.api';
-import { useCartStore } from '@/stores/cart.store';
+import { queryClient } from '@/lib/query-client';
 
 export interface AssistantMessage {
   role: 'user' | 'assistant';
@@ -68,14 +67,9 @@ function saveConversationId(id: string | null) {
   } catch {}
 }
 
-/** Refresh the cart store after assistant adds items */
-async function refreshCart() {
-  try {
-    const cart = await getCartApi();
-    useCartStore.getState().setItems(cart.items);
-  } catch {
-    // User may not be logged in client-side; ignore
-  }
+/** Refresh the cart after assistant adds items by invalidating the React Query cache */
+function refreshCart() {
+  queryClient.invalidateQueries({ queryKey: ['cart'] });
 }
 
 export const useChatStore = create<ChatState>()((set, get) => ({
