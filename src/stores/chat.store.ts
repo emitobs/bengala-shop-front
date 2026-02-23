@@ -136,15 +136,25 @@ export const useChatStore = create<ChatState>()((set, get) => ({
         refreshCart();
       }
     } catch (error) {
-      const status = (error as any)?.response?.status;
+      const axiosErr = error as any;
+      const status = axiosErr?.response?.status;
+      const serverMessage = axiosErr?.response?.data?.message;
+      // Always log to help diagnose production issues
+      console.error('[Chat] API error:', {
+        status,
+        serverMessage,
+        message: axiosErr?.message,
+        url: axiosErr?.config?.url,
+      });
+
       let content =
         'Lo siento, hubo un error al procesar tu mensaje. Intenta de nuevo.';
       if (status === 429) {
         content =
           'Estas enviando mensajes muy rapido. Espera un momento e intenta de nuevo.';
-      }
-      if (import.meta.env.DEV) {
-        console.error('[Chat] API error:', error);
+      } else if (status === 500) {
+        content =
+          'Lo siento, el asistente tuvo un problema interno. Intenta de nuevo en unos segundos.';
       }
       const errorMsg: AssistantMessage = { role: 'assistant', content };
       const updated = [...currentMessages, errorMsg];
