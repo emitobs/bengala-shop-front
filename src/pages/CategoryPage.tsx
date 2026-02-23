@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { normalizeProducts, normalizeCategory } from '@/lib/product-helpers';
+import Seo, { buildBreadcrumbSchema } from '@/components/seo/Seo';
 import { useCategoryBySlug, useProducts } from '@/hooks/useProducts';
 import type { Category, Product } from '@/types/product.types';
 import Breadcrumb from '@/components/ui/Breadcrumb';
@@ -435,6 +436,16 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title={category.name}
+        description={category.description || `Compra ${category.name} en Bengala Max. Envios a todo Uruguay.`}
+        url={`/categorias/${slug}`}
+        jsonLd={buildBreadcrumbSchema([
+          { name: 'Inicio', url: '/' },
+          { name: 'Productos', url: '/productos' },
+          { name: category.name, url: `/categorias/${slug}` },
+        ])}
+      />
       {/* Hero banner */}
       <section
         className="py-12 md:py-16"

@@ -2,6 +2,7 @@ import { useState, useMemo, type FormEvent } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Search, PackageSearch } from 'lucide-react';
 import { normalizeProducts } from '@/lib/product-helpers';
+import Seo from '@/components/seo/Seo';
 import { useProducts } from '@/hooks/useProducts';
 import type { Product } from '@/types/product.types';
 import Input from '@/components/ui/Input';
@@ -105,6 +106,11 @@ export default function SearchResultsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title={query ? `Buscar: ${query}` : 'Buscar productos'}
+        description={query ? `Resultados de busqueda para "${query}" en Bengala Max.` : 'Busca productos en Bengala Max.'}
+        noindex
+      />
       {/* Search bar header */}
       <section className="border-b border-border bg-surface py-6">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

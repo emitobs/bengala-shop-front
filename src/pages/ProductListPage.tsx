@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { normalizeProducts } from '@/lib/product-helpers';
+import Seo, { buildBreadcrumbSchema } from '@/components/seo/Seo';
 import { useProducts, useCategories } from '@/hooks/useProducts';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Select from '@/components/ui/Select';
@@ -438,6 +439,15 @@ export default function ProductListPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Productos"
+        description="Explora todos los productos de Bengala Max. Encontra lo que buscas al mejor precio con envio a todo Uruguay."
+        url="/productos"
+        jsonLd={buildBreadcrumbSchema([
+          { name: 'Inicio', url: '/' },
+          { name: 'Productos', url: '/productos' },
+        ])}
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         {/* Breadcrumb */}
         <Breadcrumb

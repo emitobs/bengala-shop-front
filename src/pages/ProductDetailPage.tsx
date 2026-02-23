@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { normalizeProduct, normalizeProducts, getProductInitials, PRODUCT_PLACEHOLDER_IMAGE } from '@/lib/product-helpers';
+import Seo, { buildProductSchema, buildBreadcrumbSchema } from '@/components/seo/Seo';
 import { useProductBySlug, useProducts } from '@/hooks/useProducts';
 import { useProductReviews, useCreateReview } from '@/hooks/useReviews';
 import { useAddToCart } from '@/hooks/useCart';
@@ -434,15 +435,45 @@ export default function ProductDetailPage() {
   const currentImageUrl = sortedImages[selectedImageIndex]?.url;
   const currentImageHasError = imageErrors[selectedImageIndex];
 
+  const categoryName = product.category?.name ?? product.categories?.[0]?.name ?? 'Categoria';
+  const categorySlugForBreadcrumb = product.category?.slug ?? product.categories?.[0]?.slug ?? '';
+
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title={product.name}
+        description={product.shortDescription || product.description?.slice(0, 160) || product.name}
+        image={sortedImages[0]?.url}
+        url={`/productos/${product.slug}`}
+        type="product"
+        jsonLd={[
+          buildProductSchema({
+            name: product.name,
+            slug: product.slug,
+            description: product.description || product.name,
+            basePrice: product.basePrice,
+            compareAtPrice: product.compareAtPrice,
+            images: sortedImages,
+            averageRating: product.averageRating,
+            reviewCount: product.reviewCount,
+            category: product.category ?? product.categories?.[0] ?? null,
+            variants: product.variants,
+          }),
+          buildBreadcrumbSchema([
+            { name: 'Inicio', url: '/' },
+            { name: 'Productos', url: '/productos' },
+            { name: categoryName, url: `/categorias/${categorySlugForBreadcrumb}` },
+            { name: product.name, url: `/productos/${product.slug}` },
+          ]),
+        ]}
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
             { label: 'Inicio', href: '/' },
             { label: 'Productos', href: '/productos' },
-            { label: product.category?.name ?? product.categories?.[0]?.name ?? 'Categoria', href: `/categorias/${product.category?.slug ?? product.categories?.[0]?.slug ?? ''}` },
+            { label: categoryName, href: `/categorias/${categorySlugForBreadcrumb}` },
             { label: product.name },
           ]}
           className="mb-8"

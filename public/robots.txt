@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /checkout
+Disallow: /mi-cuenta
+Disallow: /pago/
+Disallow: /iniciar-sesion
+Disallow: /registrarse
+
+Sitemap: https://bengalamax.uy/api/sitemap.xml

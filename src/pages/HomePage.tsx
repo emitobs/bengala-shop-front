@@ -10,6 +10,7 @@ import {
 import Button from '@/components/ui/Button';
 import Skeleton from '@/components/ui/Skeleton';
 import ProductCard from '@/components/product/ProductCard';
+import Seo, { buildOrganizationSchema, buildLocalBusinessSchema } from '@/components/seo/Seo';
 import { useProducts } from '@/hooks/useProducts';
 import { useBanners } from '@/hooks/useBanners';
 import { useSubscribeNewsletter } from '@/hooks/useNewsletter';
@@ -23,6 +24,10 @@ import type { Banner } from '@/types';
 export default function HomePage() {
   return (
     <div className="flex flex-col">
+      <Seo
+        url="/"
+        jsonLd={[buildOrganizationSchema(), ...buildLocalBusinessSchema()]}
+      />
       <HeroCarousel />
       <SecondaryBannersGrid />
       <FeaturedProductsSection />
