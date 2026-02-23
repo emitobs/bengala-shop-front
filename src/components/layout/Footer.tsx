@@ -130,19 +130,19 @@ export default function Footer() {
                 <ul className="mt-1.5 space-y-1.5">
                   <li className="flex items-start gap-2">
                     <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
-                    <span className="text-sm text-gray-400">Rincon 1783</span>
+                    <a href="https://maps.google.com/?q=Rincon+1783,+Fray+Bentos,+Uruguay" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 transition-colors hover:text-white">Rincon 1783</a>
                   </li>
                   <li className="flex items-start gap-2">
                     <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
-                    <a href="tel:+59898161513" className="text-sm text-gray-400 transition-colors hover:text-white">098 161 513</a>
+                    <a href="https://wa.me/59898161513" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 transition-colors hover:text-white">098 161 513</a>
                   </li>
                   <li className="flex items-start gap-2">
                     <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
-                    <span className="text-sm text-gray-400">18 de Julio 1174</span>
+                    <a href="https://maps.google.com/?q=18+de+Julio+1174,+Fray+Bentos,+Uruguay" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 transition-colors hover:text-white">18 de Julio 1174</a>
                   </li>
                   <li className="flex items-start gap-2">
                     <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
-                    <a href="tel:+59891423838" className="text-sm text-gray-400 transition-colors hover:text-white">091 423 838</a>
+                    <a href="https://wa.me/59891423838" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 transition-colors hover:text-white">091 423 838</a>
                   </li>
                 </ul>
               </div>
@@ -154,11 +154,11 @@ export default function Footer() {
                 <ul className="mt-1.5 space-y-1.5">
                   <li className="flex items-start gap-2">
                     <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
-                    <span className="text-sm text-gray-400">Colon 442</span>
+                    <a href="https://maps.google.com/?q=Colon+442,+Mercedes,+Uruguay" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 transition-colors hover:text-white">Colon 442</a>
                   </li>
                   <li className="flex items-start gap-2">
                     <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
-                    <a href="tel:+59891423854" className="text-sm text-gray-400 transition-colors hover:text-white">091 423 854</a>
+                    <a href="https://wa.me/59891423854" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 transition-colors hover:text-white">091 423 854</a>
                   </li>
                 </ul>
               </div>
