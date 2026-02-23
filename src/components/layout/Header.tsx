@@ -16,6 +16,7 @@ import LogoHorizontal from '@/assets/LogoHorizontal.png';
 import { useAuthStore } from '@/stores/auth.store';
 import { useCartStore } from '@/stores/cart.store';
 import { useUIStore } from '@/stores/ui.store';
+import { useStoreSettings } from '@/hooks/useAdmin';
 import { cn } from '@/lib/cn';
 
 const NAV_LINKS = [
@@ -29,6 +30,7 @@ export default function Header() {
   const totalItems = useCartStore((s) => s.totalItems());
   const toggleDrawer = useCartStore((s) => s.toggleDrawer);
   const { isSearchOpen, toggleSearch, toggleMobileMenu } = useUIStore();
+  const { data: storeSettings } = useStoreSettings();
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,16 +72,18 @@ export default function Header() {
   return (
     <header className="w-full">
       {/* Colorful announcement bar */}
-      <div
-        className="hidden sm:block"
-        style={{
-          background: 'linear-gradient(90deg, #FF6B35, #E5541E, #2D2D3F)',
-        }}
-      >
-        <div className="mx-auto max-w-7xl px-4 py-1.5 text-center text-xs font-semibold tracking-wide text-white">
-          Envio gratis en compras mayores a $3.000
+      {storeSettings?.announcementBar && (
+        <div
+          className="hidden sm:block"
+          style={{
+            background: 'linear-gradient(90deg, #FF6B35, #E5541E, #2D2D3F)',
+          }}
+        >
+          <div className="mx-auto max-w-7xl px-4 py-1.5 text-center text-xs font-semibold tracking-wide text-white">
+            {storeSettings.announcementBar}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main header */}
       <div

@@ -416,6 +416,7 @@ export async function deleteBannerApi(id: string): Promise<void> {
 export interface StoreSettings {
   id: string;
   hideOutOfStock: boolean;
+  announcementBar: string | null;
   mpEnabled: boolean;
   dlEnabled: boolean;
   updatedAt: string;
@@ -423,6 +424,7 @@ export interface StoreSettings {
 
 export interface UpdateStoreSettingsRequest {
   hideOutOfStock?: boolean;
+  announcementBar?: string;
   mpEnabled?: boolean;
   mpAccessToken?: string;
   mpPublicKey?: string;

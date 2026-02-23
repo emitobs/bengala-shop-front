@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Settings, CreditCard, Eye, EyeOff } from 'lucide-react';
+import { Settings, CreditCard, Eye, EyeOff, Megaphone } from 'lucide-react';
 import Card, { CardBody, CardHeader } from '@/components/ui/Card';
 import Skeleton from '@/components/ui/Skeleton';
 import { cn } from '@/lib/cn';
@@ -81,6 +81,10 @@ export default function AdminSettingsPage() {
   const { data: paymentCreds, isLoading: credsLoading } =
     usePaymentCredentials();
 
+  // Announcement bar state
+  const [announcementText, setAnnouncementText] = useState('');
+  const [announcementDirty, setAnnouncementDirty] = useState(false);
+
   // MercadoPago form state
   const [mpAccessToken, setMpAccessToken] = useState('');
   const [mpPublicKey, setMpPublicKey] = useState('');
@@ -94,6 +98,12 @@ export default function AdminSettingsPage() {
   const handleToggleHideOutOfStock = () => {
     if (!settings) return;
     updateMutation.mutate({ hideOutOfStock: !settings.hideOutOfStock });
+  };
+
+  const handleSaveAnnouncement = () => {
+    updateMutation.mutate({ announcementBar: announcementText }, {
+      onSuccess: () => setAnnouncementDirty(false),
+    });
   };
 
   const handleSaveMercadoPago = () => {
@@ -194,6 +204,53 @@ export default function AdminSettingsPage() {
                   )}
                 />
               </button>
+            </div>
+          )}
+        </CardBody>
+      </Card>
+
+      {/* Announcement bar */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Megaphone className="h-5 w-5 text-primary" />
+            <h2 className="font-semibold text-secondary">
+              Barra de anuncios
+            </h2>
+          </div>
+        </CardHeader>
+        <CardBody>
+          {isLoading ? (
+            <Skeleton variant="text" className="h-10 w-full" />
+          ) : (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-secondary">
+                  Mensaje
+                </label>
+                <input
+                  type="text"
+                  value={announcementDirty ? announcementText : (announcementText || settings?.announcementBar || '')}
+                  onChange={(e) => {
+                    setAnnouncementText(e.target.value);
+                    setAnnouncementDirty(true);
+                  }}
+                  placeholder="Ej: Envio gratis en compras mayores a $3.000"
+                  className="mt-1 w-full rounded-lg border border-border bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  Dejar vacio para ocultar la barra
+                </p>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleSaveAnnouncement}
+                  disabled={updateMutation.isPending || !announcementDirty}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {updateMutation.isPending ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
             </div>
           )}
         </CardBody>
