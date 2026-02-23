@@ -100,6 +100,8 @@ interface FilterContentProps {
   onPriceRangeChange: (range: string) => void;
   selectedMinRating: number | null;
   onMinRatingChange: (rating: number | null) => void;
+  hasDiscount: boolean;
+  onToggleDiscount: (value: boolean) => void;
   onClearAll: () => void;
   activeFilterCount: number;
 }
@@ -112,6 +114,8 @@ function FilterContent({
   onPriceRangeChange,
   selectedMinRating,
   onMinRatingChange,
+  hasDiscount,
+  onToggleDiscount,
   onClearAll,
   activeFilterCount,
 }: FilterContentProps) {
@@ -132,6 +136,39 @@ function FilterContent({
           </button>
         </div>
       )}
+
+      {/* Offers / discount toggle */}
+      <FilterSection title="Ofertas">
+        <label
+          className={cn(
+            'flex items-center gap-3 rounded-button px-3 py-2 cursor-pointer',
+            'transition-colors duration-150',
+            hasDiscount
+              ? 'bg-primary-light text-primary font-medium'
+              : 'hover:bg-gray-50 text-gray-600',
+          )}
+        >
+          <input
+            type="checkbox"
+            checked={hasDiscount}
+            onChange={() => onToggleDiscount(!hasDiscount)}
+            className="sr-only"
+          />
+          <span
+            className={cn(
+              'flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 transition-all duration-150',
+              hasDiscount ? 'border-primary bg-primary' : 'border-gray-300',
+            )}
+          >
+            {hasDiscount && (
+              <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+          </span>
+          <span className="text-sm">Solo productos en oferta</span>
+        </label>
+      </FilterSection>
 
       {/* Price range */}
       <FilterSection title="Precio">
@@ -292,6 +329,7 @@ export default function ProductListPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
   const [selectedMinRating, setSelectedMinRating] = useState<number | null>(null);
+  const [hasDiscount, setHasDiscount] = useState(false);
   const [sortBy, setSortBy] = useState('relevant');
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -328,6 +366,7 @@ export default function ProductListPage() {
     categorySlug: selectedCategories.length > 0 ? selectedCategories[0] : undefined,
     minPrice: parsedPriceRange.minPrice,
     maxPrice: parsedPriceRange.maxPrice,
+    hasDiscount: hasDiscount || undefined,
     sortBy: apiSort,
   });
 
@@ -343,8 +382,9 @@ export default function ProductListPage() {
     if (selectedCategories.length > 0) count += selectedCategories.length;
     if (selectedPriceRange !== 'all') count += 1;
     if (selectedMinRating !== null) count += 1;
+    if (hasDiscount) count += 1;
     return count;
-  }, [selectedCategories, selectedPriceRange, selectedMinRating]);
+  }, [selectedCategories, selectedPriceRange, selectedMinRating, hasDiscount]);
 
   // Toggle category (use slug instead of id for API)
   const handleToggleCategory = useCallback((catSlug: string) => {
@@ -373,6 +413,7 @@ export default function ProductListPage() {
     setSelectedCategories([]);
     setSelectedPriceRange('all');
     setSelectedMinRating(null);
+    setHasDiscount(false);
     setSearchQuery('');
     setCurrentPage(1);
   }, []);
@@ -386,6 +427,11 @@ export default function ProductListPage() {
     onPriceRangeChange: handlePriceRangeChange,
     selectedMinRating,
     onMinRatingChange: handleMinRatingChange,
+    hasDiscount,
+    onToggleDiscount: (value) => {
+      setHasDiscount(value);
+      setCurrentPage(1);
+    },
     onClearAll: handleClearAll,
     activeFilterCount,
   };
@@ -537,6 +583,16 @@ export default function ProductListPage() {
                     className="inline-flex items-center gap-1 rounded-full bg-primary-light text-primary px-3 py-1 text-xs font-medium hover:bg-primary/20 transition-colors duration-150"
                   >
                     {selectedMinRating}+ estrellas
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+                {hasDiscount && (
+                  <button
+                    type="button"
+                    onClick={() => setHasDiscount(false)}
+                    className="inline-flex items-center gap-1 rounded-full bg-primary-light text-primary px-3 py-1 text-xs font-medium hover:bg-primary/20 transition-colors duration-150"
+                  >
+                    En oferta
                     <X className="h-3 w-3" />
                   </button>
                 )}

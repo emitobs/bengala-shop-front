@@ -39,6 +39,11 @@ import {
   type AdminCreateUserRequest,
   type AdminUpdateUserRequest,
   type AdminResetPasswordRequest,
+  getAdminCouponsApi,
+  createCouponApi,
+  toggleCouponApi,
+  deleteCouponApi,
+  type CreateCouponRequest,
   getStoreSettingsApi,
   updateStoreSettingsApi,
   getPaymentCredentialsApi,
@@ -384,6 +389,60 @@ export function useDeleteBanner() {
       queryClient.invalidateQueries({ queryKey: ['admin', 'banners'] });
       queryClient.invalidateQueries({ queryKey: ['banners'] });
       toast.success('Banner eliminado');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
+    },
+  });
+}
+
+// ── Coupons ───────────────────────────────────────────────────
+
+export function useAdminCoupons(params?: { page?: number; limit?: number }) {
+  return useQuery({
+    queryKey: ['admin', 'coupons', params],
+    queryFn: () => getAdminCouponsApi(params),
+  });
+}
+
+export function useCreateCoupon() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateCouponRequest) => createCouponApi(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'coupons'] });
+      toast.success('Cupon creado');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
+    },
+  });
+}
+
+export function useToggleCoupon() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => toggleCouponApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'coupons'] });
+      toast.success('Estado del cupon actualizado');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
+    },
+  });
+}
+
+export function useDeleteCoupon() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteCouponApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'coupons'] });
+      toast.success('Cupon eliminado');
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error));

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ChevronRight,
   ChevronLeft,
@@ -11,12 +11,16 @@ import {
   CreditCard,
   Truck,
   Loader2,
+  BookMarked,
+  Tag,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCart } from '@/hooks/useCart';
 import { useCalculateShipping } from '@/hooks/useShipping';
 import { useStoreSettings } from '@/hooks/useAdmin';
 import { useAuthStore } from '@/stores/auth.store';
+import { useAddresses } from '@/hooks/useUsers';
+import { useValidateCoupon } from '@/hooks/useCoupons';
 import { createAddressApi } from '@/api/users.api';
 import { createOrderApi } from '@/api/orders.api';
 import { createPaymentApi } from '@/api/payments.api';
@@ -86,6 +90,7 @@ interface FormErrors {
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const user = useAuthStore((s) => s.user);
 
   // Fetch real cart data
@@ -95,6 +100,15 @@ export default function CheckoutPage() {
 
   // Store settings (payment method toggles)
   const { data: storeSettings } = useStoreSettings();
+
+  // Saved addresses
+  const { data: savedAddresses = [] } = useAddresses();
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+
+  // Coupon from cart page
+  const validateCoupon = useValidateCoupon();
+  const [couponCode, setCouponCode] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
 
   // Shipping calculation mutation
   const calculateShipping = useCalculateShipping();
@@ -144,12 +158,28 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
+  // Validate coupon from URL params
+  useEffect(() => {
+    const couponParam = searchParams.get('coupon');
+    if (couponParam && subtotal > 0 && !couponCode) {
+      setCouponCode(couponParam);
+      validateCoupon.mutate(
+        { code: couponParam, subtotal },
+        {
+          onSuccess: (result) => setCouponDiscount(result.discount),
+          onError: () => setCouponDiscount(0),
+        },
+      );
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subtotal]);
+
   /* ---- Computed values ---- */
   const shippingCost = apiShippingCost ?? BASE_SHIPPING_COST;
   const hasFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
   const shippingKnown = hasFreeShipping || !!shippingAddress.department;
   const finalShipping = hasFreeShipping ? 0 : shippingCost;
-  const total = subtotal + (shippingKnown ? finalShipping : 0);
+  const total = subtotal + (shippingKnown ? finalShipping : 0) - couponDiscount;
 
   /* ---- Validation ---- */
   const validateStep1 = (): boolean => {
@@ -230,24 +260,31 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
-      // 1. Create shipping address
-      const address = await createAddressApi({
-        label: 'Envio',
-        recipientName: `${personalData.firstName} ${personalData.lastName}`,
-        street: shippingAddress.street,
-        number: shippingAddress.number,
-        apartment: shippingAddress.apartment || undefined,
-        city: shippingAddress.city,
-        department: shippingAddress.department,
-        postalCode: shippingAddress.zipCode,
-        phone: personalData.phone || undefined,
-      });
+      // 1. Use selected saved address or create new one
+      let addressId: string;
+      if (selectedAddressId) {
+        addressId = selectedAddressId;
+      } else {
+        const address = await createAddressApi({
+          label: 'Envio',
+          recipientName: `${personalData.firstName} ${personalData.lastName}`,
+          street: shippingAddress.street,
+          number: shippingAddress.number,
+          apartment: shippingAddress.apartment || undefined,
+          city: shippingAddress.city,
+          department: shippingAddress.department,
+          postalCode: shippingAddress.zipCode,
+          phone: personalData.phone || undefined,
+        });
+        addressId = address.id;
+      }
 
       // 2. Create order from cart
       const provider = PAYMENT_PROVIDER_MAP[paymentMethod];
       const order = await createOrderApi({
-        addressId: address.id,
+        addressId,
         paymentProvider: provider,
+        couponCode: couponCode || undefined,
       });
 
       // 3. Create payment session and get redirect URL
@@ -372,6 +409,35 @@ export default function CheckoutPage() {
                   shippingCost={shippingCost}
                   hasFreeShipping={hasFreeShipping}
                   isCalculating={calculateShipping.isPending}
+                  savedAddresses={savedAddresses}
+                  selectedAddressId={selectedAddressId}
+                  onSelectSavedAddress={(id) => {
+                    if (id) {
+                      setSelectedAddressId(id);
+                      const addr = savedAddresses.find((a) => a.id === id);
+                      if (addr) {
+                        setShippingAddress({
+                          street: addr.street,
+                          number: addr.number,
+                          apartment: addr.apartment || '',
+                          city: addr.city,
+                          department: addr.department,
+                          zipCode: addr.postalCode,
+                        });
+                        if (addr.department) {
+                          calculateShipping.mutate(addr.department, {
+                            onSuccess: (data) => {
+                              if (typeof data.cost === 'number') setApiShippingCost(data.cost);
+                            },
+                          });
+                        }
+                      }
+                    } else {
+                      setSelectedAddressId(null);
+                      setShippingAddress({ street: '', number: '', apartment: '', city: '', department: '', zipCode: '' });
+                      setApiShippingCost(null);
+                    }
+                  }}
                 />
               )}
               {currentStep === 3 && (
@@ -493,6 +559,17 @@ export default function CheckoutPage() {
                   </span>
                 )}
               </div>
+              {couponDiscount > 0 && (
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-success">
+                    <Tag className="h-3.5 w-3.5" />
+                    Cupon {couponCode}
+                  </span>
+                  <span className="font-medium text-success">
+                    -{formatUYU(couponDiscount)}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Total */}
@@ -642,6 +719,9 @@ interface Step2Props {
   shippingCost: number;
   hasFreeShipping: boolean;
   isCalculating: boolean;
+  savedAddresses: import('@/api/users.api').Address[];
+  selectedAddressId: string | null;
+  onSelectSavedAddress: (id: string | null) => void;
 }
 
 function Step2ShippingAddress({
@@ -651,6 +731,9 @@ function Step2ShippingAddress({
   shippingCost,
   hasFreeShipping,
   isCalculating,
+  savedAddresses,
+  selectedAddressId,
+  onSelectSavedAddress,
 }: Step2Props) {
   return (
     <div>
@@ -663,7 +746,51 @@ function Step2ShippingAddress({
         </h2>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      {/* Saved addresses */}
+      {savedAddresses.length > 0 && (
+        <div className="mb-6">
+          <label className="mb-2 flex items-center gap-1.5 text-sm font-medium text-secondary">
+            <BookMarked className="h-4 w-4 text-primary" />
+            Direcciones guardadas
+          </label>
+          <div className="space-y-2">
+            {savedAddresses.map((addr) => (
+              <button
+                key={addr.id}
+                type="button"
+                onClick={() => onSelectSavedAddress(selectedAddressId === addr.id ? null : addr.id)}
+                className={cn(
+                  'w-full rounded-lg border-2 p-3 text-left text-sm transition-all',
+                  selectedAddressId === addr.id
+                    ? 'border-primary bg-primary-light'
+                    : 'border-border hover:border-gray-300',
+                )}
+              >
+                <p className="font-medium text-secondary">
+                  {addr.label || 'Direccion'}{addr.isDefault ? ' (Principal)' : ''}
+                </p>
+                <p className="text-secondary-light">
+                  {addr.street} {addr.number}{addr.apartment ? `, ${addr.apartment}` : ''}, {addr.city}, {addr.department}
+                </p>
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => onSelectSavedAddress(null)}
+              className={cn(
+                'w-full rounded-lg border-2 border-dashed p-3 text-left text-sm transition-all',
+                !selectedAddressId
+                  ? 'border-primary bg-primary-light'
+                  : 'border-border hover:border-gray-300',
+              )}
+            >
+              <p className="font-medium text-secondary">+ Nueva direccion</p>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className={cn('grid gap-5 sm:grid-cols-2', selectedAddressId && 'pointer-events-none opacity-50')}>
         <Input
           label="Calle"
           placeholder="Nombre de la calle"

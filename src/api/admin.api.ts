@@ -465,6 +465,63 @@ export async function getPaymentCredentialsApi(): Promise<PaymentCredentials> {
   return response.data;
 }
 
+// ── Coupons Admin ─────────────────────────────────────────────
+
+export interface AdminCoupon {
+  id: string;
+  code: string;
+  description: string | null;
+  discountType: 'PERCENTAGE' | 'FIXED';
+  discountValue: string | number;
+  minPurchase: string | number | null;
+  maxDiscount: string | number | null;
+  usageLimit: number | null;
+  usageCount: number;
+  isActive: boolean;
+  startsAt: string;
+  expiresAt: string | null;
+  createdAt: string;
+}
+
+export interface AdminCouponListResponse {
+  data: AdminCoupon[];
+  meta: PaginationMeta;
+}
+
+export interface CreateCouponRequest {
+  code: string;
+  description?: string;
+  discountType: 'PERCENTAGE' | 'FIXED';
+  discountValue: number;
+  minPurchase?: number;
+  maxDiscount?: number;
+  usageLimit?: number;
+  isActive?: boolean;
+  expiresAt?: string;
+}
+
+export async function getAdminCouponsApi(params?: {
+  page?: number;
+  limit?: number;
+}): Promise<AdminCouponListResponse> {
+  const response = await apiClient.get<AdminCouponListResponse>('/coupons', { params });
+  return response.data;
+}
+
+export async function createCouponApi(data: CreateCouponRequest): Promise<AdminCoupon> {
+  const response = await apiClient.post<AdminCoupon>('/coupons', data);
+  return response.data;
+}
+
+export async function toggleCouponApi(id: string): Promise<AdminCoupon> {
+  const response = await apiClient.patch<AdminCoupon>(`/coupons/${id}/toggle`);
+  return response.data;
+}
+
+export async function deleteCouponApi(id: string): Promise<void> {
+  await apiClient.delete(`/coupons/${id}`);
+}
+
 // ── Branches (Sucursales) ─────────────────────────────────────
 
 export interface Branch {

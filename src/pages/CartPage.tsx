@@ -309,7 +309,7 @@ export default function CartPage() {
             </div>
 
             {/* Checkout button */}
-            <Link to="/checkout">
+            <Link to={appliedCouponCode ? `/checkout?coupon=${encodeURIComponent(appliedCouponCode)}` : '/checkout'}>
               <Button variant="primary" size="lg" fullWidth>
                 Finalizar compra
               </Button>

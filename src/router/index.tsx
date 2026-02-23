@@ -40,6 +40,7 @@ const AdminOrderDetailPage = lazy(() => import('@/pages/admin/AdminOrderDetailPa
 const AdminShippingPage = lazy(() => import('@/pages/admin/AdminShippingPage'));
 const AdminBannersPage = lazy(() => import('@/pages/admin/AdminBannersPage'));
 const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'));
+const AdminCouponsPage = lazy(() => import('@/pages/admin/AdminCouponsPage'));
 const AdminSettingsPage = lazy(() => import('@/pages/admin/AdminSettingsPage'));
 const AdminBranchesPage = lazy(() => import('@/pages/admin/AdminBranchesPage'));
 
@@ -103,6 +104,7 @@ export const router = createBrowserRouter([
           { path: '/admin/pedidos/:id', element: <SuspensePage><AdminOrderDetailPage /></SuspensePage> },
           { path: '/admin/envios', element: <SuspensePage><AdminShippingPage /></SuspensePage> },
           { path: '/admin/banners', element: <SuspensePage><AdminBannersPage /></SuspensePage> },
+          { path: '/admin/cupones', element: <SuspensePage><AdminCouponsPage /></SuspensePage> },
           { path: '/admin/usuarios', element: <SuspensePage><AdminUsersPage /></SuspensePage> },
           { path: '/admin/sucursales', element: <SuspensePage><AdminBranchesPage /></SuspensePage> },
           { path: '/admin/configuracion', element: <SuspensePage><AdminSettingsPage /></SuspensePage> },
