@@ -120,7 +120,7 @@ const FAQ_SECTIONS = [
       {
         question: '¿Como inicio una devolucion?',
         answer:
-          'Contactanos por email a contacto@bengalamax.com o por telefono al +598 99 123 456 indicando tu numero de pedido y el motivo. Nuestro equipo te respondera dentro de las 48 horas habiles.',
+          'Contactanos por email a contacto@bengalamax.uy o por telefono al +598 99 123 456 indicando tu numero de pedido y el motivo. Nuestro equipo te respondera dentro de las 48 horas habiles.',
       },
       {
         question: '¿Cuanto tarda el reembolso?',
@@ -233,10 +233,10 @@ export default function FaqPage() {
           Habla con <strong className="text-white">Rayitas</strong>, nuestro
           asistente virtual, o escribinos a{' '}
           <a
-            href="mailto:contacto@bengalamax.com"
+            href="mailto:contacto@bengalamax.uy"
             className="underline underline-offset-2 transition-colors hover:text-white"
           >
-            contacto@bengalamax.com
+            contacto@bengalamax.uy
           </a>
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

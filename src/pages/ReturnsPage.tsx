@@ -85,10 +85,10 @@ export default function ReturnsPage() {
             <li>
               <strong>Contactenos</strong> por email a{' '}
               <a
-                href="mailto:contacto@bengalamax.com"
+                href="mailto:contacto@bengalamax.uy"
                 className="text-primary hover:underline"
               >
-                contacto@bengalamax.com
+                contacto@bengalamax.uy
               </a>{' '}
               o por telefono al +598 99 123 456, indicando su numero de pedido y
               el motivo de la devolucion.
@@ -190,10 +190,10 @@ export default function ReturnsPage() {
             <li>
               Email:{' '}
               <a
-                href="mailto:contacto@bengalamax.com"
+                href="mailto:contacto@bengalamax.uy"
                 className="text-primary hover:underline"
               >
-                contacto@bengalamax.com
+                contacto@bengalamax.uy
               </a>
             </li>
             <li>Telefono: +598 99 123 456</li>

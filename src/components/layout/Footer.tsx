@@ -122,10 +122,10 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
                 <a
-                  href="mailto:contacto@bengalamax.com"
+                  href="mailto:contacto@bengalamax.uy"
                   className="text-sm text-gray-400 transition-colors hover:text-white"
                 >
-                  contacto@bengalamax.com
+                  contacto@bengalamax.uy
                 </a>
               </li>
               <li className="flex items-start gap-3">

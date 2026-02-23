@@ -192,10 +192,10 @@ export default function TermsPage() {
             <li>
               Email:{' '}
               <a
-                href="mailto:contacto@bengalamax.com"
+                href="mailto:contacto@bengalamax.uy"
                 className="text-primary hover:underline"
               >
-                contacto@bengalamax.com
+                contacto@bengalamax.uy
               </a>
             </li>
             <li>Telefono: +598 99 123 456</li>
