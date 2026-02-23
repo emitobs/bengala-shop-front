@@ -4,9 +4,6 @@ import {
   X,
   Home,
   ShoppingBag,
-  Cpu,
-  Sofa,
-  Shirt,
   Tag,
   UserCircle,
   Package,
@@ -21,10 +18,7 @@ import { cn } from '@/lib/cn';
 
 const NAV_LINKS = [
   { to: '/', label: 'Inicio', icon: Home },
-  { to: '/productos', label: 'Productos', icon: ShoppingBag },
-  { to: '/categorias/tecnologia', label: 'Tecnología', icon: Cpu },
-  { to: '/categorias/hogar', label: 'Hogar', icon: Sofa },
-  { to: '/categorias/ropa-y-accesorios', label: 'Ropa y Accesorios', icon: Shirt },
+  { to: '/productos', label: 'Tienda', icon: ShoppingBag },
   { to: '/productos?ofertas=true', label: 'Ofertas', icon: Tag },
 ] as const;
 

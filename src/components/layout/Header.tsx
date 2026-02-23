@@ -20,10 +20,7 @@ import { cn } from '@/lib/cn';
 
 const NAV_LINKS = [
   { to: '/', label: 'Inicio' },
-  { to: '/productos', label: 'Productos' },
-  { to: '/categorias/tecnologia', label: 'Tecnologia' },
-  { to: '/categorias/hogar', label: 'Hogar' },
-  { to: '/categorias/ropa-y-accesorios', label: 'Ropa' },
+  { to: '/productos', label: 'Tienda' },
 ] as const;
 
 export default function Header() {
@@ -291,7 +288,7 @@ export default function Header() {
 
         {/* Desktop navigation bar */}
         <nav className="hidden border-t border-border md:block">
-          <div className="mx-auto flex max-w-7xl items-center gap-1 px-4">
+          <div className="mx-auto flex max-w-7xl items-center gap-1 px-4 py-2.5">
             {NAV_LINKS.map((link) => (
               <NavLink
                 key={link.to}
