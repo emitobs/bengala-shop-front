@@ -104,7 +104,7 @@ export default function PrivacyPage() {
           </p>
           <ul className="mt-2 list-inside list-disc space-y-1.5 pl-2">
             <li>
-              <strong>Procesadores de pago:</strong> MercadoPago y dLocal Go,
+              <strong>Procesadores de pago:</strong> MercadoPago,
               para procesar sus transacciones de forma segura.
             </li>
             <li>

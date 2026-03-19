@@ -10,7 +10,7 @@ import Badge from '@/components/ui/Badge';
 import EmptyState from '@/components/ui/EmptyState';
 import type { CartItem } from '@/types';
 
-const FREE_SHIPPING_THRESHOLD = 3000;
+
 
 export default function CartDrawer() {
   const isOpen = useCartStore((s) => s.isOpen);
@@ -40,8 +40,6 @@ export default function CartDrawer() {
   const handleNavigate = () => {
     toggleDrawer();
   };
-
-  const hasFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
 
   return (
     <Drawer
@@ -100,19 +98,12 @@ export default function CartDrawer() {
 
             {/* Shipping threshold info */}
             <div className="mb-4">
-              {hasFreeShipping ? (
-                <div className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2">
-                  <Truck className="h-4 w-4 shrink-0 text-success" />
-                  <Badge variant="success">Envio gratis!</Badge>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2">
-                  <Truck className="h-4 w-4 shrink-0 text-amber-600" />
-                  <span className="text-xs text-amber-700">
-                    Envio gratis a partir de {formatUYU(FREE_SHIPPING_THRESHOLD)}
-                  </span>
-                </div>
-              )}
+              <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2">
+                <Truck className="h-4 w-4 shrink-0 text-blue-600" />
+                <span className="text-xs text-blue-700">
+                  Envios a todo Uruguay
+                </span>
+              </div>
             </div>
 
             {/* Action buttons */}

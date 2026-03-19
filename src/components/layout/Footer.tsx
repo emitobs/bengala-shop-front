@@ -20,7 +20,6 @@ const ACCOUNT_LINKS = [
 const LEGAL_LINKS = [
   { to: '/terminos-y-condiciones', label: 'Terminos y Condiciones' },
   { to: '/politica-de-privacidad', label: 'Privacidad' },
-  { to: '/politica-de-devoluciones', label: 'Devoluciones' },
   { to: '/preguntas-frecuentes', label: 'FAQ' },
 ] as const;
 

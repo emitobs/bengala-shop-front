@@ -125,7 +125,7 @@ export default function ReturnsPage() {
               utilizado en la compra original.
             </li>
             <li>
-              <strong>MercadoPago / dLocal Go:</strong> el reembolso se
+              <strong>MercadoPago:</strong> el reembolso se
               refleja en un plazo de 5 a 10 dias habiles, dependiendo de la
               entidad bancaria.
             </li>

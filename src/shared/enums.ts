@@ -23,7 +23,6 @@ export enum OrderStatus {
 
 export enum PaymentProvider {
   MERCADOPAGO = 'MERCADOPAGO',
-  DLOCAL_GO = 'DLOCAL_GO',
 }
 
 export enum PaymentStatus {

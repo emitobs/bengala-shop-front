@@ -91,10 +91,6 @@ export default function TermsPage() {
               en cuenta de MercadoPago.
             </li>
             <li>
-              <strong>dLocal Go:</strong> tarjetas de credito y debito
-              nacionales e internacionales.
-            </li>
-            <li>
               <strong>Transferencia bancaria:</strong> transferencia directa a
               nuestra cuenta (el pedido se procesa una vez confirmada la
               acreditacion).
@@ -118,8 +114,7 @@ export default function TermsPage() {
           </p>
           <p className="mt-3">
             El costo de envio se calcula automaticamente en base a la direccion
-            de destino y el peso/volumen del pedido. Las compras superiores a
-            $3.000 UYU cuentan con envio gratuito.
+            de destino y el peso/volumen del pedido.
           </p>
         </section>
 

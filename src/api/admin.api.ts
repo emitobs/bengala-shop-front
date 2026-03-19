@@ -418,7 +418,6 @@ export interface StoreSettings {
   hideOutOfStock: boolean;
   announcementBar: string | null;
   mpEnabled: boolean;
-  dlEnabled: boolean;
   updatedAt: string;
 }
 
@@ -429,10 +428,6 @@ export interface UpdateStoreSettingsRequest {
   mpAccessToken?: string;
   mpPublicKey?: string;
   mpWebhookSecret?: string;
-  dlEnabled?: boolean;
-  dlApiKey?: string;
-  dlSecretKey?: string;
-  dlApiUrl?: string;
 }
 
 export interface PaymentCredentials {
@@ -440,11 +435,6 @@ export interface PaymentCredentials {
     accessToken: string | null;
     publicKey: string | null;
     webhookSecret: string | null;
-  };
-  dlocal: {
-    apiKey: string | null;
-    secretKey: string | null;
-    apiUrl: string | null;
   };
 }
 

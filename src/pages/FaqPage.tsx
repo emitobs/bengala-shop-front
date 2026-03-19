@@ -76,7 +76,7 @@ const FAQ_SECTIONS = [
       {
         question: '¿Cuanto cuesta el envio?',
         answer:
-          'El costo de envio se calcula automaticamente al momento de la compra en base a la direccion de destino y el peso del pedido. Las compras superiores a $3.000 UYU cuentan con envio gratuito a todo el pais.',
+          'El costo de envio se calcula automaticamente al momento de la compra en base a la direccion de destino y el peso del pedido.',
       },
       {
         question: '¿Puedo rastrear mi pedido?',
@@ -93,39 +93,17 @@ const FAQ_SECTIONS = [
       {
         question: '¿Que medios de pago aceptan?',
         answer:
-          'Aceptamos tarjetas de credito y debito a traves de MercadoPago y dLocal Go, asi como transferencia bancaria directa. Todos los precios estan en Pesos Uruguayos (UYU).',
+          'Aceptamos tarjetas de credito y debito a traves de MercadoPago, asi como transferencia bancaria directa. Todos los precios estan en Pesos Uruguayos (UYU).',
       },
       {
         question: '¿Puedo pagar en cuotas?',
         answer:
-          'Si, a traves de MercadoPago y dLocal Go podes pagar con tarjeta de credito en cuotas. Las opciones de financiacion disponibles se muestran al momento del checkout.',
+          'Si, a traves de MercadoPago podes pagar con tarjeta de credito en cuotas. Las opciones de financiacion disponibles se muestran al momento del checkout.',
       },
       {
         question: '¿Es seguro pagar en el sitio?',
         answer:
-          'Absolutamente. Nuestro sitio utiliza encriptacion SSL/TLS y no almacenamos datos de tarjetas. Los pagos son procesados de forma segura a traves de MercadoPago y dLocal Go, plataformas certificadas internacionalmente.',
-      },
-    ],
-  },
-  {
-    title: 'Devoluciones y cambios',
-    icon: RefreshCw,
-    color: 'bg-orange-50 text-orange-600',
-    items: [
-      {
-        question: '¿Puedo devolver un producto?',
-        answer:
-          'Si, aceptamos devoluciones dentro de los 30 dias corridos desde la recepcion del producto. El producto debe estar en su estado original, sin uso, con embalaje y etiquetas. Consulta nuestra Politica de Devoluciones para mas detalles.',
-      },
-      {
-        question: '¿Como inicio una devolucion?',
-        answer:
-          'Contactanos por email a contacto@bengalamax.uy o por telefono al +598 99 123 456 indicando tu numero de pedido y el motivo. Nuestro equipo te respondera dentro de las 48 horas habiles.',
-      },
-      {
-        question: '¿Cuanto tarda el reembolso?',
-        answer:
-          'Una vez aprobada la devolucion y recibido el producto, el reembolso se procesa en un plazo de 5 a 10 dias habiles, dependiendo del medio de pago y la entidad bancaria.',
+          'Absolutamente. Nuestro sitio utiliza encriptacion SSL/TLS y no almacenamos datos de tarjetas. Los pagos son procesados de forma segura a traves de MercadoPago, plataforma certificada internacionalmente.',
       },
     ],
   },
@@ -159,7 +137,7 @@ const FAQ_SECTIONS = [
       {
         question: '¿Los productos tienen garantia?',
         answer:
-          'Si, todos nuestros productos cuentan con la garantia del fabricante. En caso de defectos de fabrica, contactanos y gestionaremos el reclamo. Ademas, tenes 30 dias para devoluciones por cualquier motivo.',
+          'Si, todos nuestros productos cuentan con la garantia del fabricante. En caso de defectos de fabrica, contactanos y gestionaremos el reclamo.',
       },
       {
         question: '¿Que hago si un producto esta agotado?',
@@ -240,12 +218,6 @@ export default function FaqPage() {
           </a>
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Link
-            to="/politica-de-devoluciones"
-            className="rounded-full bg-white/20 px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/30"
-          >
-            Politica de devoluciones
-          </Link>
           <Link
             to="/terminos-y-condiciones"
             className="rounded-full bg-white/20 px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/30"

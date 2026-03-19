@@ -12,7 +12,7 @@ export interface OrderItem {
 
 export interface Payment {
   id: string;
-  provider: 'MERCADOPAGO' | 'DLOCAL_GO' | 'SIMULATION';
+  provider: 'MERCADOPAGO' | 'SIMULATION';
   externalId: string | null;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'REFUNDED' | 'CANCELLED' | 'IN_PROCESS';
   amount: number;

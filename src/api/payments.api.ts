@@ -4,7 +4,7 @@ import { apiClient } from '@/api/client';
 
 export interface CreatePaymentRequest {
   orderId: string;
-  provider: 'MERCADOPAGO' | 'DLOCAL_GO' | 'SIMULATION';
+  provider: 'MERCADOPAGO' | 'SIMULATION';
 }
 
 // ── Response types ─────────────────────────────────────────────
@@ -16,17 +16,12 @@ export interface MercadoPagoPaymentResponse {
   sandboxInitPoint?: string;
 }
 
-export interface DLocalPaymentResponse {
-  provider: 'DLOCAL_GO';
-  paymentUrl: string;
-}
-
 export interface SimulationPaymentResponse {
   provider: 'SIMULATION';
   paymentUrl: string;
 }
 
-export type PaymentResponse = MercadoPagoPaymentResponse | DLocalPaymentResponse | SimulationPaymentResponse;
+export type PaymentResponse = MercadoPagoPaymentResponse | SimulationPaymentResponse;
 
 // ── API functions ──────────────────────────────────────────────
 

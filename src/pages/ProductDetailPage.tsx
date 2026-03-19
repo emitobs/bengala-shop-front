@@ -859,7 +859,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-secondary">
-                    Envio gratis a partir de $3.000
+                    Envios a todo el pais
                   </p>
                   <p className="text-xs text-gray-400">
                     Entrega en 24-72 horas habiles
@@ -872,7 +872,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-secondary">
-                    MercadoPago y dLocal Go
+                    MercadoPago
                   </p>
                   <p className="text-xs text-gray-400">
                     Tarjetas, debito, transferencia y mas
@@ -885,23 +885,10 @@ export default function ProductDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-secondary">
-                    Garantia de 12 meses
+                    Compra segura
                   </p>
                   <p className="text-xs text-gray-400">
-                    Soporte tecnico incluido
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 px-4 py-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-50">
-                  <RotateCcw className="h-4.5 w-4.5 text-amber-500" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-secondary">
-                    30 dias de devolucion
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Sin preguntas, devolucion gratuita
+                    Pagos encriptados y seguros
                   </p>
                 </div>
               </div>

@@ -227,9 +227,7 @@ function OrderDetailContent({ order }: { order: Order }) {
   const providerLabel =
     order.payment?.provider === 'MERCADOPAGO'
       ? 'MercadoPago'
-      : order.payment?.provider === 'DLOCAL_GO'
-        ? 'dLocal Go'
-        : '-';
+      : '-';
 
   const paymentStatusInfo = order.payment
     ? PAYMENT_STATUS_MAP[order.payment.status]

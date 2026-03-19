@@ -90,11 +90,6 @@ export default function AdminSettingsPage() {
   const [mpPublicKey, setMpPublicKey] = useState('');
   const [mpWebhookSecret, setMpWebhookSecret] = useState('');
 
-  // dLocal form state
-  const [dlApiKey, setDlApiKey] = useState('');
-  const [dlSecretKey, setDlSecretKey] = useState('');
-  const [dlApiUrl, setDlApiUrl] = useState('');
-
   const handleToggleHideOutOfStock = () => {
     if (!settings) return;
     updateMutation.mutate({ hideOutOfStock: !settings.hideOutOfStock });
@@ -121,21 +116,6 @@ export default function AdminSettingsPage() {
     });
   };
 
-  const handleSaveDLocal = () => {
-    const data: Record<string, string> = {};
-    if (dlApiKey) data.dlApiKey = dlApiKey;
-    if (dlSecretKey) data.dlSecretKey = dlSecretKey;
-    if (dlApiUrl) data.dlApiUrl = dlApiUrl;
-    if (Object.keys(data).length === 0) return;
-    updateMutation.mutate(data, {
-      onSuccess: () => {
-        setDlApiKey('');
-        setDlSecretKey('');
-        setDlApiUrl('');
-      },
-    });
-  };
-
   if (isError) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -147,7 +127,6 @@ export default function AdminSettingsPage() {
   }
 
   const mpConfigured = paymentCreds?.mercadopago.accessToken != null;
-  const dlConfigured = paymentCreds?.dlocal.apiKey != null;
 
   return (
     <div className="space-y-6">
@@ -235,7 +214,7 @@ export default function AdminSettingsPage() {
                     setAnnouncementText(e.target.value);
                     setAnnouncementDirty(true);
                   }}
-                  placeholder="Ej: Envio gratis en compras mayores a $3.000"
+                  placeholder="Ej: Ofertas especiales esta semana"
                   className="mt-1 w-full rounded-lg border border-border bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
                 <p className="mt-1 text-xs text-gray-400">
@@ -354,109 +333,6 @@ export default function AdminSettingsPage() {
             </CardBody>
           </Card>
 
-          {/* dLocal Go */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-purple-600" />
-                  <h2 className="font-semibold text-secondary">dLocal Go</h2>
-                  <span
-                    className={cn(
-                      'rounded-full px-2.5 py-0.5 text-xs font-medium',
-                      dlConfigured
-                        ? 'bg-green-50 text-green-700'
-                        : 'bg-gray-100 text-gray-500',
-                    )}
-                  >
-                    {dlConfigured ? 'Configurado' : 'Sin configurar'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">
-                    {settings?.dlEnabled ? 'Activo' : 'Inactivo'}
-                  </span>
-                  <button
-                    onClick={() => updateMutation.mutate({ dlEnabled: !settings?.dlEnabled })}
-                    disabled={updateMutation.isPending}
-                    className={cn(
-                      'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors',
-                      settings?.dlEnabled ? 'bg-success' : 'bg-gray-300',
-                      updateMutation.isPending && 'cursor-not-allowed opacity-50',
-                    )}
-                    role="switch"
-                    aria-checked={settings?.dlEnabled ?? false}
-                    aria-label="Activar dLocal Go"
-                  >
-                    <span
-                      className={cn(
-                        'inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform',
-                        settings?.dlEnabled ? 'translate-x-[22px]' : 'translate-x-[3px]',
-                      )}
-                    />
-                  </button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardBody>
-              {credsLoading ? (
-                <div className="space-y-3">
-                  <Skeleton variant="text" className="h-10 w-full" />
-                  <Skeleton variant="text" className="h-10 w-full" />
-                  <Skeleton variant="text" className="h-10 w-full" />
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <CredentialInput
-                    label="API Key"
-                    maskedValue={paymentCreds?.dlocal.apiKey ?? null}
-                    placeholder="Tu API Key de dLocal Go"
-                    value={dlApiKey}
-                    onChange={setDlApiKey}
-                  />
-                  <CredentialInput
-                    label="Secret Key"
-                    maskedValue={paymentCreds?.dlocal.secretKey ?? null}
-                    placeholder="Tu Secret Key de dLocal Go"
-                    value={dlSecretKey}
-                    onChange={setDlSecretKey}
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-secondary">
-                      API URL
-                    </label>
-                    <input
-                      type="text"
-                      value={
-                        dlApiUrl || paymentCreds?.dlocal.apiUrl || ''
-                      }
-                      onChange={(e) => setDlApiUrl(e.target.value)}
-                      placeholder="https://api-sbx.dlocalgo.com/v1"
-                      className="mt-1 w-full rounded-lg border border-border bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    />
-                    <p className="mt-1 text-xs text-gray-400">
-                      Sandbox: https://api-sbx.dlocalgo.com/v1 — Produccion:
-                      https://api.dlocalgo.com/v1
-                    </p>
-                  </div>
-                  <div className="flex justify-end pt-2">
-                    <button
-                      onClick={handleSaveDLocal}
-                      disabled={
-                        updateMutation.isPending ||
-                        (!dlApiKey && !dlSecretKey && !dlApiUrl)
-                      }
-                      className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {updateMutation.isPending
-                        ? 'Guardando...'
-                        : 'Guardar dLocal Go'}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </CardBody>
-          </Card>
         </>
       )}
     </div>

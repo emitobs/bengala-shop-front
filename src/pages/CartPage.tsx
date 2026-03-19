@@ -23,8 +23,6 @@ import Badge from '@/components/ui/Badge';
 import EmptyState from '@/components/ui/EmptyState';
 import type { CartItem } from '@/types';
 
-const FREE_SHIPPING_THRESHOLD = 3000;
-const SHIPPING_COST = 290;
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -90,9 +88,7 @@ export default function CartPage() {
     setCouponError('');
   };
 
-  const hasFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
-  const shippingCost = hasFreeShipping ? 0 : SHIPPING_COST;
-  const total = subtotal + shippingCost - appliedDiscount;
+  const total = subtotal - appliedDiscount;
 
   // Loading state
   if (isLoading) {
@@ -216,14 +212,10 @@ export default function CartPage() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-secondary-light">Envio estimado</span>
-                {hasFreeShipping ? (
-                  <Badge variant="success">Gratis</Badge>
-                ) : (
-                  <span className="font-medium text-secondary">
-                    {formatUYU(shippingCost)}
-                  </span>
-                )}
+                <span className="text-secondary-light">Envio</span>
+                <span className="text-sm text-secondary-light">
+                  A cargo del comprador al recibir
+                </span>
               </div>
               {appliedDiscount > 0 && (
                 <div className="flex items-center justify-between">
@@ -234,18 +226,6 @@ export default function CartPage() {
                 </div>
               )}
             </div>
-
-            {/* Free shipping progress */}
-            {!hasFreeShipping && (
-              <div className="mt-3 rounded-lg bg-amber-50 px-3 py-2">
-                <div className="flex items-center gap-2">
-                  <Truck className="h-4 w-4 shrink-0 text-amber-600" />
-                  <span className="text-xs text-amber-700">
-                    Te faltan {formatUYU(FREE_SHIPPING_THRESHOLD - subtotal)} para envio gratis
-                  </span>
-                </div>
-              </div>
-            )}
 
             {/* Divider */}
             <div className="my-5 border-t border-border" />
@@ -350,7 +330,7 @@ export default function CartPage() {
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-secondary-light">
                   <Truck className="h-4 w-4 shrink-0 text-success" />
-                  <span>Envio gratis en compras mayores a $3.000</span>
+                  <span>Envios a todo Uruguay</span>
                 </div>
               </div>
             </div>

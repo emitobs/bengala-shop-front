@@ -218,9 +218,7 @@ export default function AdminOrderDetailPage() {
   const providerLabel =
     order.payment?.provider === 'MERCADOPAGO'
       ? 'MercadoPago'
-      : order.payment?.provider === 'DLOCAL_GO'
-        ? 'dLocal Go'
-        : order.payment?.provider ?? '-';
+      : order.payment?.provider ?? '-';
 
   // Build timeline - use statusHistory if available (from the backend response)
   const orderAny = order as unknown as { statusHistory?: { fromStatus: string | null; toStatus: string; note: string | null; createdAt: string }[] };

@@ -38,8 +38,6 @@ import type { CartItem } from '@/types';
 /*  Constants                                                          */
 /* ------------------------------------------------------------------ */
 
-const FREE_SHIPPING_THRESHOLD = 3000;
-const BASE_SHIPPING_COST = 290;
 
 const STEPS = [
   { number: 1, label: 'Datos personales', icon: User },
@@ -54,7 +52,6 @@ const DEPARTMENT_OPTIONS = URUGUAY_DEPARTMENTS.map((dept) => ({
 
 const PAYMENT_PROVIDER_MAP = {
   mercadopago: 'MERCADOPAGO',
-  dlocal: 'DLOCAL_GO',
   simulation: 'SIMULATION',
 } as const;
 
@@ -78,7 +75,7 @@ interface ShippingAddress {
   zipCode: string;
 }
 
-type PaymentMethod = 'mercadopago' | 'dlocal' | 'simulation' | null;
+type PaymentMethod = 'mercadopago' | 'simulation' | null;
 
 interface FormErrors {
   [key: string]: string;
@@ -175,11 +172,7 @@ export default function CheckoutPage() {
   }, [subtotal]);
 
   /* ---- Computed values ---- */
-  const shippingCost = apiShippingCost ?? BASE_SHIPPING_COST;
-  const hasFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
-  const shippingKnown = hasFreeShipping || !!shippingAddress.department;
-  const finalShipping = hasFreeShipping ? 0 : shippingCost;
-  const total = subtotal + (shippingKnown ? finalShipping : 0) - couponDiscount;
+  const total = subtotal - couponDiscount;
 
   /* ---- Validation ---- */
   const validateStep1 = (): boolean => {
@@ -406,9 +399,7 @@ export default function CheckoutPage() {
                   data={shippingAddress}
                   errors={errors}
                   onChange={updateShippingAddress}
-                  shippingCost={shippingCost}
-                  hasFreeShipping={hasFreeShipping}
-                  isCalculating={calculateShipping.isPending}
+                  isCalculating={false}
                   savedAddresses={savedAddresses}
                   selectedAddressId={selectedAddressId}
                   onSelectSavedAddress={(id) => {
@@ -446,7 +437,6 @@ export default function CheckoutPage() {
                   onSelectMethod={setPaymentMethod}
                   error={errors.paymentMethod}
                   mpEnabled={storeSettings?.mpEnabled ?? false}
-                  dlEnabled={storeSettings?.dlEnabled ?? false}
                 />
               )}
             </div>
@@ -547,17 +537,9 @@ export default function CheckoutPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-secondary-light">Envio</span>
-                {hasFreeShipping ? (
-                  <Badge variant="success">Gratis</Badge>
-                ) : shippingAddress.department ? (
-                  <span className="font-medium text-secondary">
-                    {formatUYU(finalShipping)}
-                  </span>
-                ) : (
-                  <span className="text-xs text-secondary-light">
-                    Segun departamento
-                  </span>
-                )}
+                <span className="text-sm text-secondary-light">
+                  A cargo del comprador al recibir
+                </span>
               </div>
               {couponDiscount > 0 && (
                 <div className="flex items-center justify-between">
@@ -716,8 +698,6 @@ interface Step2Props {
   data: ShippingAddress;
   errors: FormErrors;
   onChange: (field: keyof ShippingAddress, value: string) => void;
-  shippingCost: number;
-  hasFreeShipping: boolean;
   isCalculating: boolean;
   savedAddresses: import('@/api/users.api').Address[];
   selectedAddressId: string | null;
@@ -728,8 +708,6 @@ function Step2ShippingAddress({
   data,
   errors,
   onChange,
-  shippingCost,
-  hasFreeShipping,
   isCalculating,
   savedAddresses,
   selectedAddressId,
@@ -838,7 +816,7 @@ function Step2ShippingAddress({
         />
       </div>
 
-      {/* Shipping cost calculation */}
+      {/* Shipping info */}
       {data.department && (
         <div className="mt-6 rounded-lg border border-border bg-gray-50 p-4">
           <div className="flex items-center gap-2.5">
@@ -847,20 +825,9 @@ function Step2ShippingAddress({
               <p className="text-sm font-medium text-secondary">
                 Envio a {data.department}
               </p>
-              {isCalculating ? (
-                <p className="text-sm text-secondary-light flex items-center gap-1.5">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  Calculando costo de envio...
-                </p>
-              ) : hasFreeShipping ? (
-                <p className="text-sm text-success font-semibold">
-                  Gratis - tu compra supera los {formatUYU(FREE_SHIPPING_THRESHOLD)}
-                </p>
-              ) : (
-                <p className="text-sm text-secondary-light">
-                  Costo estimado: <span className="font-semibold text-secondary">{formatUYU(shippingCost)}</span>
-                </p>
-              )}
+              <p className="text-sm text-secondary-light">
+                El costo de envio se abona al recibir el pedido
+              </p>
             </div>
           </div>
         </div>
@@ -878,11 +845,10 @@ interface Step3Props {
   onSelectMethod: (method: PaymentMethod) => void;
   error?: string;
   mpEnabled: boolean;
-  dlEnabled: boolean;
 }
 
-function Step3PaymentMethod({ selectedMethod, onSelectMethod, error, mpEnabled, dlEnabled }: Step3Props) {
-  const hasAnyMethod = mpEnabled || dlEnabled || import.meta.env.DEV;
+function Step3PaymentMethod({ selectedMethod, onSelectMethod, error, mpEnabled }: Step3Props) {
+  const hasAnyMethod = mpEnabled || import.meta.env.DEV;
 
   return (
     <div>
@@ -934,46 +900,6 @@ function Step3PaymentMethod({ selectedMethod, onSelectMethod, error, mpEnabled, 
               )}
             >
               {selectedMethod === 'mercadopago' && (
-                <div className="h-2.5 w-2.5 rounded-full bg-primary" />
-              )}
-            </div>
-          </div>
-        </button>}
-
-        {/* dLocal Go */}
-        {dlEnabled && <button
-          type="button"
-          onClick={() => onSelectMethod('dlocal')}
-          className={cn(
-            'w-full rounded-card border-2 p-5 text-left transition-all duration-200',
-            selectedMethod === 'dlocal'
-              ? 'border-primary bg-primary-light shadow-sm'
-              : 'border-border bg-white hover:border-gray-300 hover:shadow-sm',
-          )}
-        >
-          <div className="flex items-center gap-4">
-            {/* Logo placeholder */}
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-50">
-              <span className="text-lg font-bold text-green-600">dL</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-secondary">
-                dLocal Go
-              </p>
-              <p className="text-xs text-secondary-light mt-0.5">
-                Paga con dLocal
-              </p>
-            </div>
-            {/* Radio indicator */}
-            <div
-              className={cn(
-                'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
-                selectedMethod === 'dlocal'
-                  ? 'border-primary'
-                  : 'border-gray-300',
-              )}
-            >
-              {selectedMethod === 'dlocal' && (
                 <div className="h-2.5 w-2.5 rounded-full bg-primary" />
               )}
             </div>
