@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
   ArrowLeft,
   GripVertical,
@@ -19,7 +20,7 @@ import {
   useUpdateProduct,
   useAdminCategories,
 } from '@/hooks/useAdmin';
-import { getAdminProductByIdApi } from '@/api/admin.api';
+import { deleteProductImageApi, getAdminProductByIdApi } from '@/api/admin.api';
 import type { AdminProductDetail } from '@/api/admin.api';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -76,6 +77,7 @@ interface VariantForm {
 export default function AdminProductEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const isNew = id === 'nuevo';
 
   // Fetch existing product (only for edit mode)
@@ -215,8 +217,24 @@ export default function AdminProductEditPage() {
 
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
+  const deleteImageMutation = useMutation({
+    mutationFn: (imageId: string) => deleteProductImageApi(id!, imageId),
+    onSuccess: (_data, imageId) => {
+      setImages((prev) => prev.filter((img) => img.id !== imageId));
+      queryClient.invalidateQueries({ queryKey: ['admin', 'product-detail', id] });
+      toast.success('Imagen eliminada');
+    },
+    onError: () => {
+      toast.error('No se pudo eliminar la imagen');
+    },
+  });
+
   const handleDeleteImage = (imageId: string) => {
-    setImages((prev) => prev.filter((img) => img.id !== imageId));
+    if (!id || isNew) {
+      setImages((prev) => prev.filter((img) => img.id !== imageId));
+      return;
+    }
+    deleteImageMutation.mutate(imageId);
   };
 
   const handleAddImagePlaceholder = () => {

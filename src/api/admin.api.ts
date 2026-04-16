@@ -332,6 +332,10 @@ export async function getAdminProductByIdApi(id: string): Promise<AdminProductDe
   return response.data;
 }
 
+export async function deleteProductImageApi(productId: string, imageId: string): Promise<void> {
+  await apiClient.delete(`/products/${productId}/images/${imageId}`);
+}
+
 export async function createProductApi(data: CreateProductRequest): Promise<Product> {
   const response = await apiClient.post<Product>('/products', data);
   return response.data;
