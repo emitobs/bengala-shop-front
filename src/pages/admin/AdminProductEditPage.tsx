@@ -209,12 +209,16 @@ export default function AdminProductEditPage() {
 
     if (isNew) {
       createMutation.mutate(productData, {
-        onSuccess: () => navigate('/admin/productos'),
+        onSuccess: (created) => navigate(`/admin/productos/${created.id}`, { replace: true }),
       });
     } else if (id) {
       updateMutation.mutate(
         { id, data: productData },
-        { onSuccess: () => navigate('/admin/productos') },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin', 'product-detail', id] });
+          },
+        },
       );
     }
   };
