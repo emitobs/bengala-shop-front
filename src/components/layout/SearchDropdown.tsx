@@ -50,7 +50,7 @@ export default function SearchDropdown({
             {products.map((product) => (
               <li key={product.id}>
                 <Link
-                  to={`/producto/${product.slug}`}
+                  to={`/productos/${product.slug}`}
                   onClick={onSelect}
                   className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-primary/5"
                 >
