@@ -19,7 +19,8 @@ import {
   useUpdateProduct,
   useAdminCategories,
 } from '@/hooks/useAdmin';
-import type { AdminProduct } from '@/api/admin.api';
+import { getAdminProductByIdApi } from '@/api/admin.api';
+import type { AdminProductDetail } from '@/api/admin.api';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
@@ -83,32 +84,8 @@ export default function AdminProductEditPage() {
     isLoading: productLoading,
   } = useQuery({
     queryKey: ['admin', 'product-detail', id],
-    queryFn: async (): Promise<AdminProduct> => {
-      // Use the admin list endpoint with the ID to get product data
-      // Since we don't have a getProductById admin endpoint, we fetch from the slug endpoint
-      // But the id parameter from URL is an ID, not a slug. Use the products admin list or fetch by slug.
-      // We'll use a direct apiClient call since the products controller has findBySlug.
-      // Actually the controller exposes GET /products/:slug which uses slug, not id.
-      // The admin products list includes full data. Let's use apiClient directly.
-      const { apiClient } = await import('@/api/client');
-      const response = await apiClient.get(`/products/admin/list`, {
-        params: { limit: 1, search: '' },
-      });
-      // This approach won't work well. Let's fetch the full admin list and filter.
-      // Actually, let's use the update endpoint to get the product after patching nothing.
-      // Best approach: fetch the product by making a special request using admin list with search.
-      // The cleanest way is to just call the products/:slug endpoint. But we have an ID.
-      // Let's call the backend with a custom request to get the product by ID via include.
-      const res = await apiClient.get(`/products/admin/list`, {
-        params: { limit: 100 },
-      });
-      const found = (res.data as { data: AdminProduct[] }).data.find(
-        (p: AdminProduct) => p.id === id,
-      );
-      if (!found) throw new Error('Product not found');
-      return found;
-    },
-    enabled: !isNew,
+    queryFn: (): Promise<AdminProductDetail> => getAdminProductByIdApi(id!),
+    enabled: !isNew && !!id,
   });
 
   // Fetch categories
@@ -167,32 +144,30 @@ export default function AdminProductEditPage() {
       setIsFeatured(existingProduct.isFeatured);
       setIsActive(existingProduct.isActive);
 
-      // Set category IDs from the categories array
-      // The admin list returns categories as { name: string }[] without IDs
-      // We need to match them with the categories list
-      if (categories && existingProduct.categories) {
-        const matchedIds = existingProduct.categories
-          .map((c) => {
-            const found = categories.find((cat) => cat.name === c.name);
-            return found?.id;
-          })
-          .filter(Boolean) as string[];
-        setCategoryIds(matchedIds);
-      }
+      setCategoryIds(existingProduct.categories.map((c) => c.id));
 
-      // Set images
-      if (existingProduct.images) {
-        setImages(
-          existingProduct.images.map((img) => ({
-            id: img.id,
-            url: img.url,
-            altText: img.altText,
-            sortOrder: img.sortOrder,
-          })),
-        );
-      }
+      setImages(
+        existingProduct.images.map((img) => ({
+          id: img.id,
+          url: img.url,
+          altText: img.altText,
+          sortOrder: img.sortOrder,
+        })),
+      );
+
+      setVariants(
+        existingProduct.variants.map((v) => ({
+          id: v.id,
+          name: v.name,
+          type: v.type,
+          sku: v.sku,
+          priceAdjustment: Number(v.priceAdjustment),
+          stock: v.stock,
+          isActive: v.isActive,
+        })),
+      );
     }
-  }, [existingProduct, isNew, categories]);
+  }, [existingProduct, isNew]);
 
   const categoryOptions = useMemo(() => {
     if (!categories) return [];

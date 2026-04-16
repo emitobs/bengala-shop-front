@@ -209,6 +209,38 @@ export interface AdminProduct {
   variants?: { stock: number }[];
 }
 
+export interface AdminProductDetail {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  shortDescription: string | null;
+  sku: string;
+  basePrice: string | number;
+  compareAtPrice: string | number | null;
+  costPrice: string | number | null;
+  isActive: boolean;
+  isFeatured: boolean;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  weight: string | number | null;
+  dimensions: unknown;
+  createdAt: string;
+  updatedAt: string;
+  images: { id: string; url: string; altText: string | null; sortOrder: number; isPrimary: boolean }[];
+  categories: { id: string; name: string; slug: string }[];
+  variants: {
+    id: string;
+    name: string;
+    type: string;
+    sku: string;
+    priceAdjustment: string | number;
+    stock: number;
+    isActive: boolean;
+  }[];
+  totalStock: number;
+}
+
 export interface AdminOrderListResponse {
   data: AdminOrder[];
   meta: PaginationMeta;
@@ -292,6 +324,11 @@ export async function getAdminProductsApi(
   params?: GetAdminProductsParams,
 ): Promise<AdminProductListResponse> {
   const response = await apiClient.get<AdminProductListResponse>('/products/admin/list', { params });
+  return response.data;
+}
+
+export async function getAdminProductByIdApi(id: string): Promise<AdminProductDetail> {
+  const response = await apiClient.get<AdminProductDetail>(`/products/admin/${id}`);
   return response.data;
 }
 
