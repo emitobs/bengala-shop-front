@@ -18,6 +18,7 @@ import { useCartStore } from '@/stores/cart.store';
 import { useUIStore } from '@/stores/ui.store';
 import { useStoreSettings } from '@/hooks/useAdmin';
 import { cn } from '@/lib/cn';
+import SearchDropdown from '@/components/layout/SearchDropdown';
 
 const NAV_LINKS = [
   { to: '/', label: 'Inicio' },
@@ -34,10 +35,13 @@ export default function Header() {
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
+  const desktopSearchRef = useRef<HTMLFormElement>(null);
+  const mobileSearchRef = useRef<HTMLFormElement>(null);
 
-  // Close user dropdown on outside click
+  // Close user dropdown and search dropdown on outside click
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       userMenuRef.current &&
@@ -46,6 +50,12 @@ export default function Header() {
       !userButtonRef.current.contains(event.target as Node)
     ) {
       setIsUserMenuOpen(false);
+    }
+    const target = event.target as Node;
+    const inDesktop = desktopSearchRef.current?.contains(target);
+    const inMobile = mobileSearchRef.current?.contains(target);
+    if (!inDesktop && !inMobile) {
+      setIsSearchFocused(false);
     }
   }, []);
 
@@ -59,8 +69,15 @@ export default function Header() {
     if (searchQuery.trim()) {
       navigate(`/buscar?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
+      setIsSearchFocused(false);
       if (isSearchOpen) toggleSearch();
     }
+  };
+
+  const handleSearchSelect = () => {
+    setSearchQuery('');
+    setIsSearchFocused(false);
+    if (isSearchOpen) toggleSearch();
   };
 
   const handleLogout = () => {
@@ -102,23 +119,33 @@ export default function Header() {
 
           {/* Desktop search bar - pill shaped */}
           <form
+            ref={desktopSearchRef}
             onSubmit={handleSearch}
-            className="relative mx-4 hidden max-w-lg flex-1 md:flex"
+            className="relative mx-4 hidden max-w-lg flex-1 md:flex md:flex-col"
           >
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Que estas buscando?"
-              className="h-10 w-full rounded-full border border-border bg-background pl-5 pr-10 text-sm text-secondary outline-none transition-all placeholder:text-secondary-light/50 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 focus:bg-white"
-            />
-            <button
-              type="submit"
-              className="absolute right-1 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white transition-all hover:bg-primary-dark hover:scale-105"
-              aria-label="Buscar"
-            >
-              <Search className="h-3.5 w-3.5" />
-            </button>
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                placeholder="Que estas buscando?"
+                className="h-10 w-full rounded-full border border-border bg-background pl-5 pr-10 text-sm text-secondary outline-none transition-all placeholder:text-secondary-light/50 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 focus:bg-white"
+              />
+              <button
+                type="submit"
+                className="absolute right-1 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white transition-all hover:bg-primary-dark hover:scale-105"
+                aria-label="Buscar"
+              >
+                <Search className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            {isSearchFocused && (
+              <SearchDropdown
+                query={searchQuery}
+                onSelect={handleSearchSelect}
+              />
+            )}
           </form>
 
           {/* Right actions */}
@@ -268,25 +295,39 @@ export default function Header() {
         <div
           className={cn(
             'overflow-hidden border-t border-border transition-all duration-300 ease-in-out md:hidden',
-            isSearchOpen ? 'max-h-16 opacity-100' : 'max-h-0 opacity-0',
+            isSearchOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0',
           )}
         >
-          <form onSubmit={handleSearch} className="flex items-center gap-2 px-4 py-2">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Que estas buscando?"
-              className="h-10 flex-1 rounded-full border border-border bg-background px-4 text-sm text-secondary outline-none placeholder:text-secondary-light/50 focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
-              autoFocus={isSearchOpen}
-            />
-            <button
-              type="submit"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary-dark"
-              aria-label="Buscar"
-            >
-              <Search className="h-4 w-4" />
-            </button>
+          <form
+            ref={mobileSearchRef}
+            onSubmit={handleSearch}
+            className="relative px-4 py-2"
+          >
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                placeholder="Que estas buscando?"
+                className="h-10 flex-1 rounded-full border border-border bg-background px-4 text-sm text-secondary outline-none placeholder:text-secondary-light/50 focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                autoFocus={isSearchOpen}
+              />
+              <button
+                type="submit"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary-dark"
+                aria-label="Buscar"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </div>
+            {isSearchFocused && (
+              <SearchDropdown
+                query={searchQuery}
+                onSelect={handleSearchSelect}
+                className="relative mt-2"
+              />
+            )}
           </form>
         </div>
 

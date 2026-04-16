@@ -41,7 +41,7 @@ export function useCategoryBySlug(slug: string | undefined) {
 export function useSearchProducts(query: string) {
   return useQuery({
     queryKey: ['products', 'search', query],
-    queryFn: () => getProductsApi({ search: query }),
+    queryFn: () => getProductsApi({ search: query, limit: 5 }),
     enabled: query.length >= 2,
   });
 }
