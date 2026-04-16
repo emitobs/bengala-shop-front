@@ -20,7 +20,11 @@ import {
   useUpdateProduct,
   useAdminCategories,
 } from '@/hooks/useAdmin';
-import { deleteProductImageApi, getAdminProductByIdApi } from '@/api/admin.api';
+import {
+  deleteProductImageApi,
+  getAdminProductByIdApi,
+  reorderProductImagesApi,
+} from '@/api/admin.api';
 import type { AdminProductDetail } from '@/api/admin.api';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -229,12 +233,53 @@ export default function AdminProductEditPage() {
     },
   });
 
+  const reorderImagesMutation = useMutation({
+    mutationFn: (imageIds: string[]) => reorderProductImagesApi(id!, imageIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'product-detail', id] });
+    },
+    onError: () => {
+      toast.error('No se pudo reordenar las imagenes');
+    },
+  });
+
   const handleDeleteImage = (imageId: string) => {
     if (!id || isNew) {
       setImages((prev) => prev.filter((img) => img.id !== imageId));
       return;
     }
     deleteImageMutation.mutate(imageId);
+  };
+
+  const [draggedImageId, setDraggedImageId] = useState<string | null>(null);
+
+  const handleImageDragStart = (imageId: string) => {
+    setDraggedImageId(imageId);
+  };
+
+  const handleImageDragOver = (event: React.DragEvent, targetId: string) => {
+    event.preventDefault();
+    if (!draggedImageId || draggedImageId === targetId) return;
+    setImages((prev) => {
+      const from = prev.findIndex((img) => img.id === draggedImageId);
+      const to = prev.findIndex((img) => img.id === targetId);
+      if (from === -1 || to === -1) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+  };
+
+  const handleImageDragEnd = () => {
+    if (!draggedImageId) return;
+    setDraggedImageId(null);
+    if (id && !isNew) {
+      setImages((current) => {
+        reorderImagesMutation.mutate(current.map((img) => img.id));
+        return current;
+      });
+    }
   };
 
   const handleAddImagePlaceholder = () => {
@@ -537,18 +582,25 @@ export default function AdminProductEditPage() {
           </CardHeader>
           <CardBody>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {images.map((image) => (
+              {images.map((image, index) => (
                 <div
                   key={image.id}
-                  className="group relative aspect-square rounded-lg border-2 border-border overflow-hidden bg-gray-50"
+                  draggable
+                  onDragStart={() => handleImageDragStart(image.id)}
+                  onDragOver={(e) => handleImageDragOver(e, image.id)}
+                  onDragEnd={handleImageDragEnd}
+                  className={cn(
+                    'group relative aspect-square rounded-lg border-2 border-border overflow-hidden bg-gray-50 cursor-grab active:cursor-grabbing',
+                    draggedImageId === image.id && 'opacity-40',
+                  )}
                 >
                   <img
                     src={image.url}
                     alt={image.altText ?? ''}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover pointer-events-none"
                   />
                   {/* Drag handle */}
-                  <div className="absolute top-2 left-2 rounded bg-white/80 p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
+                  <div className="absolute top-2 left-2 rounded bg-white/80 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <GripVertical className="h-4 w-4 text-gray-400" />
                   </div>
                   {/* Delete button */}
@@ -561,7 +613,7 @@ export default function AdminProductEditPage() {
                   </button>
                   {/* Sort order badge */}
                   <div className="absolute bottom-2 left-2">
-                    <Badge variant="default">{image.sortOrder + 1}</Badge>
+                    <Badge variant="default">{index + 1}</Badge>
                   </div>
                 </div>
               ))}

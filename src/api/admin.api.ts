@@ -336,6 +336,10 @@ export async function deleteProductImageApi(productId: string, imageId: string):
   await apiClient.delete(`/products/${productId}/images/${imageId}`);
 }
 
+export async function reorderProductImagesApi(productId: string, imageIds: string[]): Promise<void> {
+  await apiClient.patch(`/products/${productId}/images/reorder`, { imageIds });
+}
+
 export async function createProductApi(data: CreateProductRequest): Promise<Product> {
   const response = await apiClient.post<Product>('/products', data);
   return response.data;
